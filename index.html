@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamsen International - GTSC Online Booking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #059669;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: #059669;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #047857;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #059669;
+            border: 2px solid #059669;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+            color: white;
+        }
+
+        .main-container {
+            margin-top: 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: calc(100vh - 80px);
+        }
+
+        .demo-panel {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .demo-panel h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .demo-panel p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .value-points {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .value-points li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .value-points li:before {
+            content: "✓";
+            background: rgba(255,255,255,0.2);
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .app-panel {
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .phone-mockup {
+            width: 320px;
+            height: 600px;
+            background: #1f2937;
+            border-radius: 25px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .app-content {
+            height: 100%;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .screen {
+            padding: 1.5rem;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .screen.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* Add typing animation for demo mode */
+        .typing-field {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #059669;
+            animation: typing 2s steps(20), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #059669; }
+        }
+
+        .route-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            transform: scale(1);
+        }
+
+        .route-card:hover,
+        .route-card.selected {
+            border-color: #059669;
+            background: #f0fdf4;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+        }
+
+        .seat {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+
+        .seat:hover,
+        .seat.selected {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .screen-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .screen-header h2 {
+            color: #1f2937;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .screen-header p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.6rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #059669;
+        }
+
+        .app-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: #059669;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .app-btn:hover {
+            background: #047857;
+        }
+
+        .route-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .route-card:hover {
+            border-color: #059669;
+            background: #f0fdf4;
+        }
+
+        .route-card.selected {
+            border-color: #059669;
+            background: #f0fdf4;
+        }
+
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .route-price {
+            background: #059669;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.3rem;
+            margin: 1rem 0;
+            max-width: 150px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .seat {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .seat.available {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .seat.occupied {
+            background: #ef4444;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .seat.selected {
+            background: #059669;
+            color: white;
+        }
+
+        .progress-indicator {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e5e7eb;
+        }
+
+        .progress-dot.active {
+            background: #059669;
+        }
+
+        .success-screen {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+
+        .booking-ref {
+            background: #f0f9ff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px solid #3b82f6;
+        }
+
+        .booking-ref-number {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .navigation-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            animation: fadeInOut 3s infinite;
+            display: none; /* Hide by default for presentations */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(5, 150, 105, 0.5); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Add smooth transitions for demo mode */
+        .demo-active input,
+        .demo-active select {
+            transition: all 0.5s ease;
+        }
+
+        /* Auto-play controls */
+        .auto-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .play-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .play-btn:hover {
+            background: white;
+            color: #059669;
+        }
+
+        .playing {
+            background: white;
+            color: #059669;
+        }
+
+        @media (max-width: 968px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-panel {
+                order: 2;
+                padding: 2rem;
+            }
+            
+            .phone-mockup {
+                width: 280px;
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <div class="logo-icon">🚌</div>
+                Gamsen International
+            </div>
+            <div class="demo-controls">
+                <button class="btn btn-secondary" onclick="resetDemo()">Reset Demo</button>
+                <button class="btn btn-primary" onclick="startAutoDemo()">Auto Demo</button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <!-- Left Panel: Value Proposition -->
+        <div class="demo-panel">
+            <h1>Transform GTSC with Digital Booking</h1>
+            <p>See how an online booking system revolutionizes bus travel operations and dramatically increases revenue.</p>
+            
+            <ul class="value-points">
+                <li>Capture 24/7 bookings - never lose a sale again</li>
+                <li>Reduce counter queues and operational costs</li>
+                <li>Real-time analytics and revenue tracking</li>
+                <li>Professional mobile-first customer experience</li>
+                <li>Automated seat management and confirmations</li>
+            </ul>
+
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-number">300%</span>
+                    <span class="stat-label">Revenue Increase Potential</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Always Available</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">60%</span>
+                    <span class="stat-label">Faster Booking Process</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">Paper Tickets Needed</span>
+                </div>
+            </div>
+
+            <div class="auto-controls">
+                <button class="play-btn" onclick="startAutoDemo()" id="auto-btn">▶ Watch Auto Demo</button>
+                <button class="play-btn" onclick="manualMode()" id="manual-btn">👆 Try It Yourself</button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Phone Mockup -->
+        <div class="app-panel">
+            <div class="phone-mockup">
+                <div class="phone-screen">
+                    <div class="progress-indicator">
+                        <div class="progress-dot active" id="dot-1"></div>
+                        <div class="progress-dot" id="dot-2"></div>
+                        <div class="progress-dot" id="dot-3"></div>
+                        <div class="progress-dot" id="dot-4"></div>
+                        <div class="progress-dot" id="dot-5"></div>
+                    </div>
+
+                    <!-- Screen 1: Welcome -->
+                    <div class="screen active" id="screen-1">
+                        <div class="screen-header">
+                            <h2>Welcome to Gamsen</h2>
+                            <p>Book your bus journey in minutes</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="name" value="Nyima Dukuray" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="phone" value="+220 372 4148" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="email" value="nyima.dukuray@gmail.com" readonly>
+                        </div>
+
+                        <button class="app-btn" onclick="nextScreen(2)">Continue to Booking</button>
+                    </div>
+
+                    <!-- Screen 2: Route Selection -->
+                    <div class="screen" id="screen-2">
+                        <div class="screen-header">
+                            <h2>Select Your Journey</h2>
+                            <p>Choose your route and travel date</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>From</label>
+                            <select>
+                                <option selected>Banjul, Gambia</option>
+                                <option>Dakar, Senegal</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>To</label>
+                            <select>
+                                <option selected>Dakar, Senegal</option>
+                                <option>Banjul, Gambia</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Travel Date</label>
+                            <input type="date" value="2025-09-15">
+                        </div>
+
+                        <button class="app-btn" onclick="nextScreen(3)">Search Available Buses</button>
+                    </div>
+
+                    <!-- Screen 3: Schedule Selection -->
+                    <div class="screen" id="screen-3">
+                        <div class="screen-header">
+                            <h2>Available Schedules</h2>
+                            <p>Banjul → Dakar • Sep 15, 2025</p>
+                        </div>
+
+                        <div class="route-card" onclick="selectRoute(this)">
+                            <div class="route-header">
+                                <strong>Morning Departure</strong>
+                                <span class="route-price">GMD 2,000</span>
+                            </div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">
+                                8:00 AM • GM-001 • 6 hours • 42 seats available
+                            </div>
+                        </div>
+
+                        <div class="route-card" onclick="selectRoute(this)">
+                            <div class="route-header">
+                                <strong>Afternoon Departure</strong>
+                                <span class="route-price">GMD 2,000</span>
+                            </div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">
+                                2:00 PM • GM-002 • 6 hours • 38 seats available
+                            </div>
+                        </div>
+
+                        <button class="app-btn" onclick="nextScreen(4)" id="schedule-btn" disabled style="opacity: 0.5;">Continue to Seat Selection</button>
+                    </div>
+
+                    <!-- Screen 4: Seat Selection -->
+                    <div class="screen" id="screen-4">
+                        <div class="screen-header">
+                            <h2>Choose Your Seat</h2>
+                            <p>Bus GM-001 • 8:00 AM Departure</p>
+                        </div>
+
+                        <div style="text-align: center; margin: 1rem 0; font-size: 0.8rem; color: #6b7280;">
+                            Select your preferred seat
+                        </div>
+
+                        <div class="seat-grid">
+                            <div class="seat available" onclick="selectSeat(this, 1)">1</div>
+                            <div class="seat occupied">2</div>
+                            <div class="seat available" onclick="selectSeat(this, 3)">3</div>
+                            <div class="seat available" onclick="selectSeat(this, 4)">4</div>
+                            <div class="seat available" onclick="selectSeat(this, 5)">5</div>
+                            <div class="seat available" onclick="selectSeat(this, 6)">6</div>
+                            <div class="seat occupied">7</div>
+                            <div class="seat available" onclick="selectSeat(this, 8)">8</div>
+                            <div class="seat available" onclick="selectSeat(this, 9)">9</div>
+                            <div class="seat available" onclick="selectSeat(this, 10)">10</div>
+                            <div class="seat available" onclick="selectSeat(this, 11)">11</div>
+                            <div class="seat available" onclick="selectSeat(this, 12)">12</div>
+                        </div>
+
+                        <div style="text-align: center; font-size: 0.7rem; color: #6b7280;">
+                            🟩 Available 🟥 Occupied 🟦 Selected
+                        </div>
+
+                        <button class="app-btn" onclick="nextScreen(5)" id="seat-btn" disabled style="opacity: 0.5;">Confirm Booking</button>
+                    </div>
+
+                    <!-- Screen 5: Confirmation -->
+                    <div class="screen success-screen" id="screen-5">
+                        <div class="success-icon">✓</div>
+                        <h2 style="color: #10b981; margin-bottom: 1rem;">Booking Confirmed!</h2>
+                        <p style="color: #6b7280; margin-bottom: 1rem;">Your ticket has been booked successfully</p>
+
+                        <div class="booking-ref">
+                            <div class="booking-ref-number">BK68B2397A9557B</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">Booking Reference</div>
+                        </div>
+
+                        <div style="background: #f9fafb; padding: 1rem; border-radius: 6px; font-size: 0.8rem; margin: 1rem 0;">
+                            <strong>Journey Details</strong><br>
+                            Route: Banjul → Dakar<br>
+                            Date: Sep 15, 2025 • 8:00 AM<br>
+                            Seat: <span id="selected-seat-display">1</span> • Bus: GM-001<br>
+                            Amount: GMD 2,000
+                        </div>
+
+                        <button class="app-btn" onclick="resetDemo()">Book Another Trip</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentScreen = 1;
+        let isAutoMode = false;
+        let autoInterval;
+        let selectedSeat = 1;
+        let autoCycleInterval;
+
+        // Start auto-cycling when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            resetDemo();
+            startAutoCycle();
+        });
+
+        function startAutoCycle() {
+            autoCycleInterval = setInterval(() => {
+                if (!isAutoMode) { // Only cycle if not in full demo mode
+                    cycleToNextScreen();
+                }
+            }, 4000); // Change screen every 4 seconds
+        }
+
+        function cycleToNextScreen() {
+            const nextScreen = currentScreen >= 5 ? 1 : currentScreen + 1;
+            
+            // Special handling for interactive elements
+            if (nextScreen === 3 && currentScreen === 2) {
+                // Auto-select route when going to schedule screen
+                setTimeout(() => {
+                    const firstRoute = document.querySelector('.route-card');
+                    if (firstRoute) firstRoute.click();
+                }, 1000);
+            } else if (nextScreen === 4 && currentScreen === 3) {
+                // Auto-select seat when going to seat selection
+                setTimeout(() => {
+                    const seat = document.querySelector('.seat[onclick*="3"]');
+                    if (seat) seat.click();
+                }, 1500);
+            } else if (nextScreen === 1 && currentScreen === 5) {
+                // Reset selections when cycling back to start
+                resetSelections();
+            }
+            
+            showScreen(nextScreen);
+        }
+
+        function resetSelections() {
+            // Reset route selection
+            document.querySelectorAll('.route-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Reset seat selection
+            document.querySelectorAll('.seat.selected').forEach(seat => {
+                seat.classList.remove('selected');
+                seat.classList.add('available');
+            });
+            
+            // Reset buttons
+            const scheduleBtn = document.getElementById('schedule-btn');
+            const seatBtn = document.getElementById('seat-btn');
+            if (scheduleBtn) {
+                scheduleBtn.disabled = true;
+                scheduleBtn.style.opacity = '0.5';
+            }
+            if (seatBtn) {
+                seatBtn.disabled = true;
+                seatBtn.style.opacity = '0.5';
+            }
+        }
+
+        function startAutoCycle() {
+            autoCycleInterval = setInterval(() => {
+                if (!isAutoMode) { // Only cycle if not in full demo mode
+                    cycleToNextScreen();
+                }
+            }, 4000); // Change screen every 4 seconds
+        }
+
+        function cycleToNextScreen() {
+            const nextScreen = currentScreen >= 5 ? 1 : currentScreen + 1;
+            
+            // Special handling for interactive elements
+            if (nextScreen === 3 && currentScreen === 2) {
+                // Auto-select route when going to schedule screen
+                setTimeout(() => {
+                    const firstRoute = document.querySelector('.route-card');
+                    if (firstRoute) firstRoute.click();
+                }, 1000);
+            } else if (nextScreen === 4 && currentScreen === 3) {
+                // Auto-select seat when going to seat selection
+                setTimeout(() => {
+                    const seat = document.querySelector('.seat[onclick*="3"]');
+                    if (seat) seat.click();
+                }, 1500);
+            } else if (nextScreen === 1 && currentScreen === 5) {
+                // Reset selections when cycling back to start
+                resetSelections();
+            }
+            
+            showScreen(nextScreen);
+        }
+
+        function resetSelections() {
+            // Reset route selection
+            document.querySelectorAll('.route-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Reset seat selection
+            document.querySelectorAll('.seat.selected').forEach(seat => {
+                seat.classList.remove('selected');
+                seat.classList.add('available');
+            });
+            
+            // Reset buttons
+            const scheduleBtn = document.getElementById('schedule-btn');
+            const seatBtn = document.getElementById('seat-btn');
+            if (scheduleBtn) {
+                scheduleBtn.disabled = true;
+                scheduleBtn.style.opacity = '0.5';
+            }
+            if (seatBtn) {
+                seatBtn.disabled = true;
+                seatBtn.style.opacity = '0.5';
+            }
+        }
+
+        function updateProgress(screenNum) {
+            // Reset all dots
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`dot-${i}`).classList.remove('active');
+            }
+            // Activate current dot
+            document.getElementById(`dot-${screenNum}`).classList.add('active');
+        }
+
+        function nextScreen(screenNum) {
+            // Hide current screen
+            document.querySelector('.screen.active').classList.remove('active');
+            
+            // Show new screen
+            document.getElementById(`screen-${screenNum}`).classList.add('active');
+            
+            currentScreen = screenNum;
+            updateProgress(screenNum);
+        }
+
+        function selectRoute(element) {
+            // Remove selection from other routes
+            document.querySelectorAll('.route-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Select this route
+            element.classList.add('selected');
+            
+            // Enable continue button
+            const btn = document.getElementById('schedule-btn');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+
+        function selectSeat(element, seatNum) {
+            if (element.classList.contains('occupied')) return;
+            
+            // Remove previous selection
+            document.querySelectorAll('.seat.selected').forEach(seat => {
+                seat.classList.remove('selected');
+                seat.classList.add('available');
+            });
+            
+            // Select this seat
+            element.classList.remove('available');
+            element.classList.add('selected');
+            
+            selectedSeat = seatNum;
+            document.getElementById('selected-seat-display').textContent = seatNum;
+            
+            // Enable confirm button
+            const btn = document.getElementById('seat-btn');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+
+        function startAutoDemo() {
+            isAutoMode = true;
+            clearInterval(autoCycleInterval); // Stop auto-cycling during full demo
+            document.getElementById('auto-btn').classList.add('playing');
+            document.getElementById('auto-btn').innerHTML = '⏸ Pause Demo';
+            
+            // Show fullscreen demo overlay
+            showFullscreenDemo();
+        }
+
+        function showFullscreenDemo() {
+            // Hide the phone mockup during fullscreen demo
+            document.querySelector('.phone-mockup').style.display = 'none';
+            
+            // Create fullscreen overlay
+            const overlay = document.createElement('div');
+            overlay.id = 'demo-overlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.95);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            `;
+            
+            overlay.innerHTML = `
+                <div style="text-align: center; max-width: 800px; padding: 2rem;">
+                    <h1 style="font-size: 3rem; margin-bottom: 2rem; color: #10b981;">Complete Auto Demo</h1>
+                    <div id="demo-step-display" style="font-size: 1.5rem; margin-bottom: 2rem; min-height: 60px;">
+                        Watch how customers will book tickets with GTSC's new system...
+                    </div>
+                    <div style="width: 400px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; margin: 2rem auto;">
+                        <div id="demo-progress-bar" style="width: 0%; height: 100%; background: #10b981; border-radius: 4px; transition: width 1s ease;"></div>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <button onclick="closeFullscreenDemo()" style="background: #059669; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; margin-right: 1rem;">Skip to Interactive</button>
+                        <button onclick="stopAutoDemo()" style="background: transparent; color: white; border: 2px solid white; padding: 1rem 2rem; border-radius: 8px; cursor: pointer;">Close Demo</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            // Start automated explanation
+            runFullDemo();
+        }
+
+        function runFullDemo() {
+            const steps = [
+                { 
+                    text: "Customer opens the Gamsen booking app on their phone", 
+                    progress: 10, 
+                    action: () => {
+                        resetDemo();
+                        showScreen(1);
+                    }
+                },
+                { 
+                    text: "They see their details are pre-filled for faster booking", 
+                    progress: 20, 
+                    action: () => {
+                        showScreen(1);
+                        // Highlight the pre-filled fields
+                        document.querySelectorAll('#screen-1 input').forEach(input => {
+                            input.style.background = '#f0fdf4';
+                            input.style.borderColor = '#059669';
+                        });
+                    }
+                },
+                { 
+                    text: "Customer selects their journey: Banjul to Dakar", 
+                    progress: 35, 
+                    action: () => {
+                        showScreen(2);
+                        // Animate dropdown selections
+                        setTimeout(() => {
+                            document.querySelector('#screen-2 select').style.borderColor = '#3b82f6';
+                            document.querySelector('#screen-2 select').style.background = '#eff6ff';
+                        }, 1000);
+                    }
+                },
+                { 
+                    text: "System shows available schedules with real-time pricing", 
+                    progress: 50, 
+                    action: () => showScreen(3)
+                },
+                { 
+                    text: "Customer picks their preferred departure time", 
+                    progress: 65, 
+                    action: () => {
+                        showScreen(3);
+                        setTimeout(() => {
+                            const firstRoute = document.querySelector('.route-card');
+                            firstRoute.style.animation = 'pulse 0.5s';
+                            firstRoute.click();
+                        }, 1500);
+                    }
+                },
+                { 
+                    text: "Interactive seat map lets them choose their exact seat", 
+                    progress: 80, 
+                    action: () => {
+                        showScreen(4);
+                        setTimeout(() => {
+                            const seat = document.querySelector('.seat[onclick*="3"]');
+                            seat.style.animation = 'pulse 0.5s';
+                            setTimeout(() => seat.click(), 500);
+                        }, 1500);
+                    }
+                },
+                { 
+                    text: "Instant confirmation with booking reference and SMS ticket", 
+                    progress: 100, 
+                    action: () => {
+                        showScreen(5);
+                        // Add success animation
+                        setTimeout(() => {
+                            document.querySelector('.success-icon').style.animation = 'bounceIn 1s';
+                        }, 500);
+                    }
+                }
+            ];
+
+            let currentStep = 0;
+            const stepDisplay = document.getElementById('demo-step-display');
+            const progressBar = document.getElementById('demo-progress-bar');
+
+            function showNextStep() {
+                if (currentStep < steps.length) {
+                    const step = steps[currentStep];
+                    stepDisplay.textContent = step.text;
+                    progressBar.style.width = step.progress + '%';
+                    
+                    // Execute the screen action
+                    if (step.action) {
+                        step.action();
+                    }
+                    
+                    currentStep++;
+                    setTimeout(showNextStep, 4000); // 4 seconds per step
+                } else {
+                    // Demo complete
+                    stepDisplay.innerHTML = `
+                        <div style="color: #10b981; font-size: 2rem; margin-bottom: 1rem;">✓ Demo Complete!</div>
+                        <div>This is how GTSC can capture bookings 24/7 and increase revenue by 300%</div>
+                    `;
+                }
+            }
+
+            showNextStep();
+        }
+
+        function showScreen(screenNum) {
+            // Hide current screen
+            document.querySelector('.screen.active').classList.remove('active');
+            
+            // Show new screen with smooth transition
+            const newScreen = document.getElementById(`screen-${screenNum}`);
+            newScreen.classList.add('active');
+            
+            currentScreen = screenNum;
+            updateProgress(screenNum);
+        }
+
+        function closeFullscreenDemo() {
+            const overlay = document.getElementById('demo-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
+            
+            // Show the phone mockup again
+            document.querySelector('.phone-mockup').style.display = 'block';
+            
+            // Switch to interactive mode
+            manualMode();
+        }
+
+        function stopAutoDemo() {
+            isAutoMode = false;
+            clearTimeout(autoInterval);
+            document.getElementById('auto-btn').classList.remove('playing');
+            document.getElementById('auto-btn').innerHTML = '▶ Watch Auto Demo';
+            
+            // Remove any overlays
+            const demoOverlay = document.getElementById('demo-overlay');
+            const interactiveOverlay = document.getElementById('interactive-overlay');
+            if (demoOverlay) demoOverlay.remove();
+            if (interactiveOverlay) interactiveOverlay.remove();
+            
+            // Show the phone mockup again
+            document.querySelector('.phone-mockup').style.display = 'block';
+            
+            resetDemo();
+            startAutoCycle(); // Restart auto-cycling
+        }
+
+        function manualMode() {
+            if (isAutoMode) {
+                stopAutoDemo();
+            }
+            clearInterval(autoCycleInterval); // Stop auto-cycling for manual mode
+            resetDemo();
+            
+            // Show interactive instructions overlay
+            showInteractiveInstructions();
+        }
+
+        function showInteractiveInstructions() {
+            const overlay = document.createElement('div');
+            overlay.id = 'interactive-overlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(5, 150, 105, 0.95);
+                z-index: 9998;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            `;
+            
+            overlay.innerHTML = `
+                <div style="text-align: center; max-width: 600px; padding: 2rem;">
+                    <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">Try The Full Booking Experience</h1>
+                    <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+                        Experience exactly what your customers will use. Click through each step to complete a real booking from start to finish.
+                    </p>
+                    <ul style="text-align: left; margin-bottom: 2rem; font-size: 1.1rem;">
+                        <li style="margin-bottom: 1rem;">📝 Enter customer details</li>
+                        <li style="margin-bottom: 1rem;">🗺️ Select your journey route</li>
+                        <li style="margin-bottom: 1rem;">⏰ Choose departure schedule</li>
+                        <li style="margin-bottom: 1rem;">💺 Pick your exact seat</li>
+                        <li style="margin-bottom: 1rem;">✅ Get instant confirmation</li>
+                    </ul>
+                    <button onclick="startInteractiveMode()" style="background: white; color: #059669; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1rem;">
+                        Start Your Booking Experience
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+        }
+
+        function startInteractiveMode() {
+            const overlay = document.getElementById('interactive-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
+            
+            // Make fields interactive
+            document.querySelectorAll('#screen-1 input').forEach(input => {
+                input.removeAttribute('readonly');
+                input.style.borderColor = '#3b82f6';
+            });
+        }
+
+        function resetDemo() {
+            if (isAutoMode) {
+                clearTimeout(autoInterval);
+                isAutoMode = false;
+                document.getElementById('auto-btn').classList.remove('playing');
+                document.getElementById('auto-btn').innerHTML = '▶ Watch Auto Demo';
+            }
+            
+            // Reset to first screen
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById('screen-1').classList.add('active');
+            
+            // Reset progress
+            currentScreen = 1;
+            updateProgress(1);
+            
+            // Reset route selection
+            document.querySelectorAll('.route-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Reset seat selection
+            document.querySelectorAll('.seat.selected').forEach(seat => {
+                seat.classList.remove('selected');
+                seat.classList.add('available');
+            });
+            
+            // Reset buttons
+            document.getElementById('schedule-btn').disabled = true;
+            document.getElementById('schedule-btn').style.opacity = '0.5';
+            document.getElementById('seat-btn').disabled = true;
+            document.getElementById('seat-btn').style.opacity = '0.5';
+            
+           // document.getElementById('hint').style.display = 'block';
+           // document.getElementById('hint').textContent = 'Click "Auto Demo" to see automated walkthrough';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            resetDemo();
+        });
+    </script>
+</body>
+</html>
